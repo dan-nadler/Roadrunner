@@ -1,7 +1,6 @@
 from twitter import oauth_dance, read_token_file, TwitterStream, OAuth
 import os
-from math import log, fabs, nan
-
+from math import log, fabs, nan, acos, sin, cos, pi
 CONSUMER_KEY = 'uqiCSPB5CYtMXYN4wV2LUkwiL'
 CONSUMER_SECRET = 'q3sSeTZNKKAc4eladDvyVlyDctL2066ht36wpwjYjpByLgWKQJ'
 
@@ -81,13 +80,15 @@ for tweet in iterartor:
         j = 0
         words = dict()
 
-    if j > 100:
-        vect = sorted([(word, subdict['count'], subdict['intersect']) for word, subdict in words.items()], key=lambda x: -x[1])
+    if j > 250:
+        # Order words by count
+        vect = sorted([(word, subdict['count'], subdict['intersect']) for word, subdict in words.items() if 'intersect' in subdict], key=lambda x: -x[1])
         strout = ''
         for k in range(8):
             strout += '{0}: {1}  '.format(vect[k][0], vect[k][1])
         print(strout, end='\r')
 
+        # Calculate distances of top 10 words
         distance_map = dict()
         for k in range(10):
             v = vect[k]
@@ -99,7 +100,27 @@ for tweet in iterartor:
                 except:
                     distance = nan
 
-        print('Distances Calculated.')
+        # Convert distance to XY coordinates
+        coords = dict()
+        for centroid, words_dict in distance_map.items():
+            coords[centroid] = dict()
+            coords[centroid][centroid] = (0,0) # the centroid word is at the center of it's own relative coordinate system
+            for word, distance in words_dict.items(): # distance between centroid and word
+                if len(coords[centroid]) == 1: # if this is the first non-centroid word
+                    coords[centroid][word] = (distance, 0.0) # separate on x-axis
+                for word2, distance2 in words_dict.items(): # distance between word2 and centroid
+                    if word == word2:
+                        continue
+                    else:
+                        d_ac = distance
+                        d_ab = distance2
+                        try:
+                            d_cb = fabs(1/log(words[word]['intersect'][word2]))
+                        except:
+                            d_cb = 2.0
+
+                        angle_a = acos((d_ac**2.+d_ab**2.-d_cb**2.)/(2.*d_ac*d_ab))
+                        coords[centroid][word2] = ( d_ac*sin((pi/2.)-angle_a), d_ac*cos((pi/2.)-angle_a) )
 
     else:
         print('Buffering... {0}/20 | {1}'.format(j, len(words)), end='\r')
