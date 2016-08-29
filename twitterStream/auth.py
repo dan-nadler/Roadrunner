@@ -98,47 +98,26 @@ for tweet in iterartor:
     except:
         pass
 
-
-
-
-    if j % 500 == 0:
-        j = 0
-        words = dict()
-
     if j > 20:
 
         df = df.resample('S').sum().replace(nan, 0)
-        df_rolling = df.rolling(360, min_periods=3).sum().T.sort_values(df.resample('S').index.values[-1])
-
-        # Order words by count
-        # vect = sorted([(word, subdict['count'], subdict['intersect']) for word, subdict in words.items() if 'intersect' in subdict], key=lambda x: -x[1])
-        # strout = ''
-        # for k in range(numwords):
-        #     strout += '{0}: {1}  '.format(vect[k][0], vect[k][1])
-        # print(strout, end='\r')
-        #
-        # # Calculate distances of top 10 words
-        # distance_map = dict()
-        # for k in range(10):
-        #     v = vect[k]
-        #     distance_map[v[0]] = dict()
-        #     for word, count in v[2].items():
-        #         try:
-        #             distance = fabs(1/log(count))
-        #             distance_map[v[0]][word] = distance
-        #         except:
-        #             distance = nan
+        df_rolling = df.rolling(60, min_periods=3).sum().T.sort_values(df.resample('S').index.values[-1])
 
         # Plot time-series
         df_plot = df_rolling.tail(numwords).T
+        try:
+            df_plot = df_plot.ix[-30:,:]
+        except:
+            pass
+
+        try:
+            for line in ax.get_lines():
+                line.remove()
+        except:
+            pass
+
         df_plot.plot(ax=ax, legend=False)
 
-        # try:
-        #     for t in ax.texts:
-        #         t.remove()
-        #         t.set_visible(False)
-        # except:
-        #     pass
 
         if len(df.index.values) % 20 == 0:
             li = 0
@@ -157,29 +136,6 @@ for tweet in iterartor:
         ax.relim()
         ax.autoscale_view(True, True, True)
         plt.pause((0.01))
-
-        # Convert distance to XY coordinates
-        continue
-        coords = dict()
-        for centroid, words_dict in distance_map.items():
-            coords[centroid] = dict()
-            coords[centroid][centroid] = (0,0) # the centroid word is at the center of it's own relative coordinate system
-            for word, distance in words_dict.items(): # distance between centroid and word
-                if len(coords[centroid]) == 1: # if this is the first non-centroid word
-                    coords[centroid][word] = (distance, 0.0) # separate on x-axis
-                for word2, distance2 in words_dict.items(): # distance between word2 and centroid
-                    if word == word2:
-                        continue
-                    else:
-                        d_ac = distance
-                        d_ab = distance2
-                        try:
-                            d_cb = fabs(1/log(words[word]['intersect'][word2]))
-                        except:
-                            d_cb = 2.0
-
-                        angle_a = acos((d_ac**2.+d_ab**2.-d_cb**2.)/(2.*d_ac*d_ab))
-                        coords[centroid][word2] = ( d_ac*sin((pi/2.)-angle_a), d_ac*cos((pi/2.)-angle_a) )
 
     else:
         print('Buffering... {0}/20 | {1}'.format(j, len(words)), end='\r')
