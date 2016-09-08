@@ -58,5 +58,5 @@ class Tweet(models.Model):
     user = models.ForeignKey(TUser, related_name='tweets')
     lang = models.CharField(max_length=10)
 
-    lat = models.IntegerField(null=True)
-    lon = models.IntegerField(null=True)
+    lat = models.FloatField(null=True)
+    lon = models.FloatField(null=True)

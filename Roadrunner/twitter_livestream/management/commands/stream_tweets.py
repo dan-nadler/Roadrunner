@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from ...models import Tweet, TUser, Hashtag, Media, URL
 from django.conf import settings
-from twitter import oauth_dance, read_token_file, TwitterStream, OAuth
+from ._get_access_token import get_access_token
+from twitter import Api
 import os
 from datetime import datetime
 
@@ -16,19 +17,15 @@ class Command(BaseCommand):
 
         CONSUMER_KEY = settings.TWITTER_CONSUMER_KEY
         CONSUMER_SECRET = settings.TWITTER_CONSUMER_SECRET
+        ACCESS_TOKEN, ACCESS_TOKEN_SECRET = get_access_token(CONSUMER_KEY, CONSUMER_SECRET)
 
-        MY_TWITTER_CREDS = os.path.expanduser('~/.my_app_credentials')
-        if not os.path.exists(MY_TWITTER_CREDS):
-            oauth_dance("SentimentVisualizer", CONSUMER_KEY, CONSUMER_SECRET, MY_TWITTER_CREDS)
+        api = Api(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
-        oauth_token, oauth_secret = read_token_file(MY_TWITTER_CREDS)
-        twitter_stream = TwitterStream(auth=OAuth(oauth_token, oauth_secret, CONSUMER_KEY, CONSUMER_SECRET))
-
-        iterartor = twitter_stream.statuses.filter(track=track)
+        iterator = api.GetStreamFilter(track=track)
 
         print('Streaming...', end='\r')
         i = 0
-        for tweet in iterartor:
+        for tweet in iterator:
             i+=1
             if 'user' not in tweet:
                 continue
