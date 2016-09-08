@@ -22,9 +22,12 @@ stop_list = ["a", "about", "above", "after", "again", "against", "all", "am", "a
              "your", "yours", "yourself", "yourselves"]
 
 # Create your views here.
-def recent_tweets():
+def top10():
     tweets = Tweet.objects.filter(created_at__gt=timezone.now()-timezone.timedelta(seconds=30)).all()
     texts = [t.text for t in tweets]
     words =' '.join(texts).split(' ')
     top10 = sorted(Counter(words).items(), key=operator.itemgetter(1))[-10:]
     return top10
+
+def index(request):
+    pass

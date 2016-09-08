@@ -35,6 +35,9 @@ class URL(models.Model):
     display_url = models.URLField()
     expanded_url = models.URLField()
 
+class Track(models.Model):
+    text = models.CharField(max_length=250, unique=True)
+
 class Tweet(models.Model):
     hashtags = models.ManyToManyField(Hashtag)
     media = models.ManyToManyField(Media)
@@ -60,3 +63,5 @@ class Tweet(models.Model):
 
     lat = models.FloatField(null=True)
     lon = models.FloatField(null=True)
+
+    track = models.ManyToManyField(Track)
