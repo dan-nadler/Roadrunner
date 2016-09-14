@@ -82,9 +82,19 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'lunchwise',
+#         'USER': '*****',
+#         'PASSWORD': '*****',
+#         'HOST': 'lunchwisedb.chnmrqt6gvho.us-east-1.rds.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
 
 # Password validation
-# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/1   9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -124,3 +134,8 @@ STATIC_URL = '/static/'
 # Twitter creds
 TWITTER_CONSUMER_KEY = 'uqiCSPB5CYtMXYN4wV2LUkwiL'
 TWITTER_CONSUMER_SECRET = 'q3sSeTZNKKAc4eladDvyVlyDctL2066ht36wpwjYjpByLgWKQJ'
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

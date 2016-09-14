@@ -6,11 +6,11 @@ class TUser(models.Model):
     screen_name = models.CharField(max_length=250)
     name = models.CharField(max_length=250)
 
-    favorites_count = models.IntegerField()
-    followers_count = models.IntegerField()
-    friends_count = models.IntegerField()
-    twitter_id = models.IntegerField()
-    statuses_count = models.IntegerField()
+    favorites_count = models.BigIntegerField()
+    followers_count = models.BigIntegerField()
+    friends_count = models.BigIntegerField()
+    twitter_id = models.BigIntegerField()
+    statuses_count = models.BigIntegerField()
 
     created_at = models.DateTimeField()
 
@@ -18,9 +18,11 @@ class TUser(models.Model):
     lang = models.CharField(max_length=10, null=True)
     location = models.CharField(max_length=250, null=True)
 
+
 class Hashtag(models.Model):
 
     text = models.CharField(max_length=250)
+
 
 class Media(models.Model):
 
@@ -29,14 +31,17 @@ class Media(models.Model):
     media_url = models.URLField()
     type = models.CharField(max_length=250)
 
+
 class URL(models.Model):
 
     url = models.URLField()
     display_url = models.URLField()
     expanded_url = models.URLField()
 
+
 class Track(models.Model):
     text = models.CharField(max_length=250, unique=True)
+
 
 class Tweet(models.Model):
     hashtags = models.ManyToManyField(Hashtag)
@@ -46,18 +51,18 @@ class Tweet(models.Model):
     user_mentions = models.ManyToManyField(TUser, related_name='mentions')
 
     created_at = models.DateTimeField()
-    favorite_count = models.IntegerField()
-    twitter_id = models.IntegerField()
+    favorite_count = models.BigIntegerField()
+    twitter_id = models.BigIntegerField()
 
     in_reply_to_screen_name = models.CharField(max_length=250, null=True)
-    in_reply_to_user_id = models.IntegerField(null=True)
+    in_reply_to_user_id = models.BigIntegerField(null=True)
 
     is_quote_status = models.BooleanField()
-    retweet_count = models.IntegerField()
+    retweet_count = models.BigIntegerField()
     retweeted = models.BooleanField()
 
     text = models.CharField(max_length=250)
-    timestamp_ms = models.IntegerField()
+    timestamp_ms = models.BigIntegerField()
     user = models.ForeignKey(TUser, related_name='tweets')
     lang = models.CharField(max_length=10)
 
@@ -65,3 +70,8 @@ class Tweet(models.Model):
     lon = models.FloatField(null=True)
 
     track = models.ManyToManyField(Track)
+
+
+class TweetQueue(models.Model):
+    json = models.TextField()
+    tracks = models.TextField()
