@@ -71,6 +71,8 @@ class Tweet(models.Model):
 
     track = models.ManyToManyField(Track)
 
+    sentiment_score = models.FloatField(blank=True, null=True)
+
 
 class TweetQueue(models.Model):
     json = models.TextField()

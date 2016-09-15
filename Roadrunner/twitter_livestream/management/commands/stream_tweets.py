@@ -29,5 +29,7 @@ class Command(BaseCommand):
         self.stdout.write('Streaming...', ending='\r')
         i = 0
         for tweet in iterator:
+            i += 1
             q = TweetQueue(json=json.dumps(tweet), tracks=','.join(track))
             q.save()
+            self.stdout.write('Streaming...{0}'.format(str(i)), ending='\r')

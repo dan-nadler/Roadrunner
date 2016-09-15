@@ -13,14 +13,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         while TweetQueue.objects.count() > 0:
-            try:
-                del tweet
-                del q
-                del track_list
-                del user_list
-                del user
-            except:
-                pass
 
             q = TweetQueue.objects.first()
             tweet = json.loads(q.json)
