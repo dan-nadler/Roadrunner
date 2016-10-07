@@ -47,11 +47,13 @@ class Command(BaseCommand):
 
             retweeted = False
             retweet_count = 0
+            retweet_id = None
 
             if 'retweeted_status' in tweet:
                 if tweet['retweeted_status'] is not None:
                     retweeted = True
                     retweet_count = tweet['retweeted_status']['retweet_count']
+                    retweet_id = tweet['retweeted_status']['id']
 
             lat, lon = None, None
             if tweet['coordinates'] is not None:
@@ -70,6 +72,7 @@ class Command(BaseCommand):
                 is_quote_status=tweet['is_quote_status'],
                 retweet_count=retweet_count,
                 retweeted=retweeted,
+                retweet_id=retweet_id,
 
                 text=tweet['text'],
                 timestamp_ms=tweet['timestamp_ms'],

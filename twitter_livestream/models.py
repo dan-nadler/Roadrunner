@@ -60,6 +60,7 @@ class Tweet(models.Model):
     is_quote_status = models.BooleanField()
     retweet_count = models.BigIntegerField()
     retweeted = models.BooleanField()
+    retweet_id = models.BigIntegerField(null=True)
 
     text = models.CharField(max_length=250)
     timestamp_ms = models.BigIntegerField()
